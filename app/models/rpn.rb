@@ -1,37 +1,34 @@
 class Rpn < ActiveRecord::Base
   def calculate(data,deli=",")
-    array_of_numbers=data.split(deli)
-    operators=["+","-","/","*","%"]
-    exception_check(array_of_numbers,operators)
-    output=0
-    opt_string=""
-    array_of_numbers.each_with_index do |data,index|
-      if operators.include?(array_of_numbers[index])
-        if data == '%'
-          opt_string = eval("#{opt_string.to_f}/100.00")
-        elsif data == '*'
-          opt_string = opt_string.to_s[0..-2].to_i * opt_string.to_s[-1].to_i
-        else
-          opt_string = eval("#{opt_string.to_s[0..-2]}#{array_of_numbers[index]}#{opt_string.to_s[-1]}")
-        end
+    expression = data.split(deli)
+    operands = []
+    evaluation = []
+    exception_check(expression)
+    expression.each do |x|
+      case x
+      when /\d/
+        evaluation.push(x.to_f)
+      when "-", "/", "*", "+"
+        operands = evaluation.pop(2)
+        evaluation.push(operands[0].send(x, operands[1]))
+      when "%"
+        operands = evaluation.pop(1)
+        evaluation.push(operands[0].send('*', 0.01))
+      when "^"
+        operands = evaluation.pop(2)
+        evaluation.push(operands[0].send('**', operands[1]))
       else
-        opt_string.to_s<<data.to_s
+        raise NameError
       end
     end
-    opt_string.to_i
+    evaluation.sum
   rescue NameError
-    return "Only numbers are allowed"
+    return "Only numbers are allowed. Your first number should be number."
   end
 
-  def exception_check(array_of_numbers,operators)
-    if !array_of_numbers.include?('+') && !array_of_numbers.include?('-') && !array_of_numbers.include?('/') && !array_of_numbers.include?('*') && !array_of_numbers.include?('%')
-      return array_of_numbers.join('').to_f
-    end
-    unless operators.include?(array_of_numbers.last) #&& data.length > 1
-      return "Last string should be an operator"
-    end
-    if operators.include? array_of_numbers.first
-      return "First letter can't be an operator"
+  def exception_check(array_of_numbers,operators=["-", "/", "*", "+",'^','%'])
+    if !operators.include?(array_of_numbers.last) || operators.include?(array_of_numbers.first)#&& data.length > 1
+      raise NameError
     end
   end
 end

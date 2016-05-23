@@ -12,43 +12,38 @@ class RpnTest < ActiveSupport::TestCase
   end
   test "the truth sum2" do
     # assert true
-    assert_equal(rpn.calculate("2,3,4,+",","),27)
+    assert_equal(rpn.calculate("1 2 3 + -"," "),-4)
   end
   test "the truth sum3" do
     # assert true
-    assert_equal(rpn.calculate("1,2,3,4,+",","),127)
+    assert_equal(rpn.calculate("12,3,+",","),15)
   end
   test "the truth sum4" do
     # assert true
-    assert_equal(rpn.calculate("1,2,3,4,+,8",","),"Last string should be an operator")
+    assert_equal(rpn.calculate("4,+,8",","),"Only numbers are allowed. Your first number should be number.")
   end
   test "the truth sum5" do
     # assert true
-    assert_equal(rpn.calculate("1,2,3,4,S,+",","),"Only numbers are allowed")
+    assert_equal(rpn.calculate("1,2,3,4,S,+",","),"Only numbers are allowed. Your first number should be number.")
   end
   test "the truth sum6" do
     # assert true
-    assert_equal(rpn.calculate("1,2,3,+,-"),-4)
+    assert_equal(rpn.calculate("50 %"," "),0.5)
   end
   test "the truth sum7" do
     # assert true
-    assert_equal(rpn.calculate("1 2 3 %"," "),1.23)
+    assert_equal(rpn.calculate("3 4 ^"," "),81)
   end
   test "the truth sum8" do
     # assert true
-    assert_equal(rpn.calculate("1 2 3 + 9 9 - 1 -"," "),4)
+    assert_equal(rpn.calculate("5 1 2 + 4 * + 3 -"," "),14)
   end
-  # test "the truth sum9" do
-  #   # assert true
-  #   
-  #   assert_equal(rpn.calculate("1 2 3 + 9 2 * 1 -"," "),317)
-  # end
+  test "the truth sum9" do
+    # assert true
+    assert_equal(rpn.calculate("-"," "),"Only numbers are allowed. Your first number should be number.")
+  end
   test "the truth sum10" do
     # assert true
-    assert_equal(rpn.calculate("1 2 3 4 5"," "),12345)
-  end
-  test "the truth sum11" do
-    # assert true
-    assert_equal(rpn.calculate("*"," "),"First letter can't be an operator")
+    assert_equal(rpn.calculate("*"," "),"Only numbers are allowed. Your first number should be number.")
   end
 end
